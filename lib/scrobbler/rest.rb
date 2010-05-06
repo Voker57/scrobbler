@@ -19,8 +19,8 @@ module Scrobbler
 
   		def request(resource, method = "get", args = nil)
   			url = URI.join(@base_url, resource)
-
-  			if args
+  				
+  			if args and method == "get"
   				url.query = args.map { |k,v| "%s=%s" % [escape(k.to_s), escape(v.to_s)] }.join("&")
   			end
 
@@ -30,6 +30,10 @@ module Scrobbler
   			when "post"
   				req = Net::HTTP::Post.new(url.request_uri)
   			end
+  			
+			if args and method == "post"
+				req.set_form_data(args)
+			end
 
   			if @username and @password
   				req.basic_auth(@username, @password)
